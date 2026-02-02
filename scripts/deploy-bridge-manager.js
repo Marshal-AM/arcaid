@@ -1,0 +1,104 @@
+const hre = require("hardhat");
+const fs = require("fs");
+const path = require("path");
+
+async function main() {
+  console.log("🚀 Deploying BridgeManager to Arc Testnet...\n");
+
+  const [deployer] = await hre.ethers.getSigners();
+  console.log("📝 Deploying with account:", deployer.address);
+  
+  const balance = await hre.ethers.provider.getBalance(deployer.address);
+  console.log("💰 Account balance:", hre.ethers.formatEther(balance), "ETH\n");
+
+  if (balance === 0n) {
+    console.log("⚠️  WARNING: Account has no balance!");
+    console.log("   Please fund your account with Arc testnet ETH.\n");
+    process.exit(1);
+  }
+
+  // Hardcoded treasury vault address from deployed-addresses.json
+  const treasuryVaultAddress = "0x9F0BF4aE6BBfD51eDbff77eA0D17A7bec484bb97";
+  
+  // Read deployed addresses for saving
+  const addressesPath = path.join(__dirname, "..", "deployed-addresses.json");
+  let deployedAddresses = {};
+  
+  if (fs.existsSync(addressesPath)) {
+    deployedAddresses = JSON.parse(fs.readFileSync(addressesPath, "utf8"));
+  }
+
+  // Get USDC address from env
+  const usdcAddress = process.env.ARC_USDC_ADDRESS;
+  
+  if (!usdcAddress || usdcAddress === "0x0000000000000000000000000000000000000000") {
+    console.log("❌ ERROR: USDC token address not set!");
+    console.log("\nPlease set ARC_USDC_ADDRESS in your .env file.");
+    process.exit(1);
+  }
+
+  // Validate addresses
+  if (!hre.ethers.isAddress(treasuryVaultAddress)) {
+    console.log("❌ ERROR: Invalid TreasuryVault address format!");
+    console.log("   Provided:", treasuryVaultAddress);
+    process.exit(1);
+  }
+
+  if (!hre.ethers.isAddress(usdcAddress)) {
+    console.log("❌ ERROR: Invalid USDC address format!");
+    console.log("   Provided:", usdcAddress);
+    process.exit(1);
+  }
+
+  console.log("💵 USDC Token Address:", usdcAddress);
+  console.log("🏦 Treasury Vault Address:", treasuryVaultAddress);
+  console.log("   (Read from deployed-addresses.json)\n");
+
+  try {
+    console.log("📦 Deploying BridgeManager...");
+    const BridgeManager = await hre.ethers.getContractFactory("BridgeManager");
+    const bridgeManager = await BridgeManager.deploy(usdcAddress, treasuryVaultAddress);
+    
+    console.log("⏳ Waiting for deployment confirmation...");
+    await bridgeManager.waitForDeployment();
+    
+    const bridgeManagerAddress = await bridgeManager.getAddress();
+    const txHash = bridgeManager.deploymentTransaction()?.hash;
+
+    console.log("\n✅ BridgeManager deployed successfully!");
+    console.log("=" .repeat(60));
+    console.log("Contract Address:", bridgeManagerAddress);
+    console.log("USDC Token:", usdcAddress);
+    console.log("Treasury Vault:", treasuryVaultAddress);
+    console.log("Transaction Hash:", txHash);
+    console.log("=" .repeat(60));
+
+    // Save to file
+    deployedAddresses.bridgeManager = bridgeManagerAddress;
+    fs.writeFileSync(addressesPath, JSON.stringify(deployedAddresses, null, 2));
+    
+    console.log("\n💾 Address saved to:", addressesPath);
+    console.log("\n💡 Update your .env file:");
+    console.log(`   ARC_BRIDGE_MANAGER=${bridgeManagerAddress}`);
+    console.log("\n📋 Next steps:");
+    console.log("   1. Update ProtocolRegistry with BridgeManager address:");
+    console.log(`      setBridgeManager(${bridgeManagerAddress})`);
+    console.log("\n   2. Update TreasuryVault with BridgeManager address:");
+    console.log(`      setBridgeManager(${bridgeManagerAddress})`);
+
+  } catch (error) {
+    console.error("\n❌ Deployment failed!");
+    console.error("Error:", error.message);
+    if (error.transaction) {
+      console.error("Transaction:", error.transaction);
+    }
+    process.exit(1);
+  }
+}
+
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
