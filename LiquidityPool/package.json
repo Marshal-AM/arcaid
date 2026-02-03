@@ -1,0 +1,23 @@
+{
+  "name": "uniswap-v3-pool-creator",
+  "version": "1.0.0",
+  "description": "Create and add liquidity to Uniswap V3 pools on Base Sepolia",
+  "main": "createPool.js",
+  "scripts": {
+    "create-pool": "node createPool.js",
+    "add-liquidity": "node addLiquidity.js"
+  },
+  "keywords": [
+    "uniswap",
+    "v3",
+    "liquidity",
+    "base",
+    "sepolia"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "ethers": "^5.7.2",
+    "dotenv": "^16.0.3"
+  }
+}
