@@ -5,6 +5,11 @@
 - **Demo Video**: Coming Soon
 - **Live App**: [View Here](https://arcaid.vercel.app)
 
+## Bounties applied for
+
+- **🏆 Best Chain Abstracted USDC Apps Using Arc as a Liquidity Hub**
+- **🏆 Build Global Payouts and Treasury Systems with USDC on Arc**
+
 ## Executive Summary
 
 **Circle Integrations Used:**
