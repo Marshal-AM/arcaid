@@ -1,5 +1,10 @@
 # Arcaid
 
+## Important Links
+
+- **Demo Video**: Coming Soon
+- **Live App**: [View Here](https://arcaid.vercel.app)
+
 ## Executive Summary
 
 **Circle Integrations Used:**
