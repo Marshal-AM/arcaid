@@ -1,0 +1,56 @@
+{
+  "name": "ai-treasury-system-test",
+  "version": "1.0.0",
+  "description": "AI-driven treasury system with Arc, Circle, and Aave integration",
+  "main": "test_full_system.js",
+  "scripts": {
+    "test": "node test_full_system.js",
+    "test:bridge": "node test_bridge_and_aave.js",
+    "test:swap": "node test_swap_and_aave.js",
+    "start": "node test_full_system.js",
+    "compile": "hardhat compile",
+    "deploy": "hardhat run scripts/deploy.js --network arcTestnet",
+    "deploy:protocol": "hardhat run scripts/deploy-protocol-registry.js --network arcTestnet",
+    "deploy:ngo": "hardhat run scripts/deploy-ngo-registry.js --network arcTestnet",
+    "deploy:policy": "hardhat run scripts/deploy-policy-engine.js --network arcTestnet",
+    "deploy:oracle": "hardhat run scripts/deploy-outcome-oracle.js --network arcTestnet",
+    "deploy:vault": "hardhat run scripts/deploy-treasury-vault.js --network arcTestnet",
+    "deploy:bridge": "hardhat run scripts/deploy-bridge-manager.js --network arcTestnet",
+    "deploy:factory": "hardhat run scripts/deploy-market-factory.js --network arcTestnet",
+    "deploy:payout": "hardhat run scripts/deploy-payout-executor.js --network arcTestnet",
+    "deploy:yield": "hardhat run scripts/deploy-yield-controller.js --network baseSepolia",
+    "deploy:dummy": "hardhat run scripts/deploy-dummy-receiver.js --network arcTestnet",
+    "configure": "hardhat run scripts/configure-contracts.js --network arcTestnet",
+    "add:payout": "hardhat run scripts/add-payout-executor.js --network arcTestnet",
+    "generate:entity": "node scripts/generate-entity-secret.js",
+    "deploy:all": "hardhat run scripts/deploy-all.js --network arcTestnet"
+  },
+  "keywords": [
+    "arc",
+    "circle",
+    "aave",
+    "defi",
+    "treasury",
+    "ngo",
+    "cross-chain"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@circle-fin/bridge-kit": "^1.5.0",
+    "@circle-fin/adapter-ethers-v6": "^1.4.0",
+    "@circle-fin/circle-sdk": "^2.9.0",
+    "@circle-fin/developer-controlled-wallets": "^10.1.0",
+    "@circle-fin/user-controlled-wallets": "^1.0.0",
+    "dotenv": "^16.3.1",
+    "ethers": "^6.10.0",
+    "readline": "^1.3.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.19.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,4 +1,4 @@
-# AI-Powered Disaster Relief Prediction Markets
+# Arcaid
 
 ## Executive Summary
 
@@ -25,10 +25,19 @@
 |---|---|---|
 | BaseYieldController | `0x52553Bc83e9dc86E980E0ADe632CaFD95f132108` | [BaseScan](https://sepolia.basescan.org/address/0x52553Bc83e9dc86E980E0ADe632CaFD95f132108) |
 
+**Important Transactions:**
+| Description | Transaction Hash | Explorer |
+|---|---|---|
+| Participation | `0x137966ca0c258fe07623b4c37bd401ed7d51574bb51198900748ffc0cb235465` | [ArcScan](https://testnet.arcscan.app/tx/0x137966ca0c258fe07623b4c37bd401ed7d51574bb51198900748ffc0cb235465) |
+| Admin wallet withdraw | `0x0647af6145c2266456e5abc4dea21596f3d951f3aaa341d2502fcd040d337d82` | [ArcScan](https://testnet.arcscan.app/tx/0x0647af6145c2266456e5abc4dea21596f3d951f3aaa341d2502fcd040d337d82) |
+| Swap USDC to Aave testnet USDC | `0x84ce9dcb041455eb38f3e0daf6fab6677fdab0c2d544e27755290a0654624f0b` | [BaseScan](https://sepolia.basescan.org/tx/0x84ce9dcb041455eb38f3e0daf6fab6677fdab0c2d544e27755290a0654624f0b) |
+| Supply to Aave | `0xc0cfb90bfebae9abea6d87980eaa9b381cbff5c93ee1107165f3a83512787f58` | [BaseScan](https://sepolia.basescan.org/tx/0xc0cfb90bfebae9abea6d87980eaa9b381cbff5c93ee1107165f3a83512787f58) |
+| NGO payout in Arbitrum | `0x6ae4009617e65093bf80140c5f531ce65d36f8f258cabbe0cfe1266ef054d55a` | [Arbitrum Sepolia](https://sepolia.arbiscan.io/tx/0x6ae4009617e65093bf80140c5f531ce65d36f8f258cabbe0cfe1266ef054d55a) |
+
 <!-- TOC -->
 ## Table of Contents
 - [Executive Summary](#executive-summary)
-- [Introduction: Zero-Loss Prediction Markets for Humanitarian Aid](#introduction-zero-loss-prediction-markets-for-humanitarian-aid)
+- [Introduction: Arcaid, Zero-Loss Prediction Markets for Humanitarian Aid](#introduction-zero-loss-prediction-markets-for-humanitarian-aid)
 - [App Logic: Complete System Flow](#app-logic-complete-system-flow)
 - [Detailed Circle Integrations](#detailed-circle-integrations)
 - [Arc Contracts: Smart Contract Architecture](#arc-contracts-smart-contract-architecture)
@@ -39,7 +48,7 @@
 
 ---
 
-## Introduction: Zero-Loss Prediction Markets for Humanitarian Aid
+## Introduction: Arcaid, Zero-Loss Prediction Markets for Humanitarian Aid
 
 Imagine a prediction market where you can never lose your investment, yet still earn rewards for being right—and where every trade automatically funds disaster relief NGOs.
 
@@ -109,7 +118,7 @@ Query prices using `getYesPrice()` and `getNoPrice()` (start at 0.50 USDC). Circ
 
 #### Step 7: Cross-Chain Bridging to Base Sepolia
 
-Bridges USDC from Arc to Base Sepolia using Circle CCTP (Circle's native token bridge). No wrapped tokens, secure attestation-based messaging. See [test_bridge_and_aave.js](test_bridge_and_aave.js) for implementation.
+Bridges USDC from Arc to Base Sepolia using Circle CCTP (Circle's native token bridge). No wrapped tokens, secure attestation-based messaging. 
 
 #### Step 8: Uniswap Liquidity Pool and Token Swap
 
@@ -117,7 +126,7 @@ Problem: Circle USDC ≠ Aave USDC on Base Sepolia. Solution: Create Uniswap V3 
 
 #### Step 9: Aave V3 Yield Deployment
 
-Approves USDC and calls `EthereumYieldController.deployToAave()`. Converts USDC → aUSDC. Aave V3 automatically generates yield. See [contracts/EthereumYieldController.sol](contracts/EthereumYieldController.sol) and [test_aave_balance.js](test_aave_balance.js).
+Approves USDC and calls `EthereumYieldController.deployToAave()`. Converts USDC → aUSDC. Aave V3 automatically generates yield. See [contracts/BaseYieldController.sol](contracts/BaseYieldController.sol) and [test_aave_balance.js](test_aave_balance.js).
 
 ### Phase 3: Market Resolution and Outcome Verification
 
@@ -129,11 +138,11 @@ Calls `MarketFactory.forceCloseMarket()`. Market state: ACTIVE → CLOSED. No ne
 
 #### Step 11: AI Outcome Verification
 
-AI searches web for evidence about market outcome. Returns: outcome (1=YES, 2=NO, 3=INVALID), confidence (0-10000), evidence. Testing mode: always YES with 9000+ confidence. See [agent/main.py](agent/main.py) and [agent/verify_request.json](agent/verify_request.json).
+AI searches web for evidence about market outcome. Returns: outcome (1=YES, 2=NO, 3=INVALID), confidence (0-10000), evidence. 
 
 #### Step 12: Blockchain Outcome Submission
 
-4-step on-chain resolution: (1) Force close market, (2) Submit outcome to OutcomeOracle, (3) Finalize outcome, (4) Resolve market. Market state: CLOSED → RESOLVED. See [contracts/OutcomeOracle.sol](contracts/OutcomeOracle.sol) and [diagnose_calculate_payouts.js](diagnose_calculate_payouts.js) for implementation.
+4-step on-chain resolution: (1) Force close market, (2) Submit outcome to OutcomeOracle, (3) Finalize outcome, (4) Resolve market. Market state: CLOSED → RESOLVED. See [contracts/OutcomeOracle.sol](contracts/OutcomeOracle.sol) for implementation.
 
 ### Phase 4: Yield Withdrawal and Payout Distribution
 
@@ -141,7 +150,7 @@ AI searches web for evidence about market outcome. Returns: outcome (1=YES, 2=NO
 
 #### Step 13: Withdraw Funds from Aave
 
-Calls `EthereumYieldController.withdrawFromAave()`. Converts aUSDC → USDC. Returns principal + yield. Bridges funds back to Arc via Circle CCTP. Records in TreasuryVault. See [contracts/EthereumYieldController.sol](contracts/EthereumYieldController.sol).
+Calls `EthereumYieldController.withdrawFromAave()`. Converts aUSDC → USDC. Returns principal + yield. Bridges funds back to Arc via Circle CCTP. Records in TreasuryVault. See [contracts/BaseYieldController.sol](contracts/BaseYieldController.sol).
 
 #### Step 14: Payout Calculation
 
@@ -151,11 +160,11 @@ Calls `EthereumYieldController.withdrawFromAave()`. Converts aUSDC → USDC. Ret
 - **Losers:** Principal refund only
 - **Protocol (10%):** System fee
 
-See [contracts/PayoutExecutor.sol](contracts/PayoutExecutor.sol) and [test_calculate_payouts_steps.js](test_calculate_payouts_steps.js) for implementation.
+See [contracts/PayoutExecutor.sol](contracts/PayoutExecutor.sol) for implementation.
 
 #### Step 15: Execute Payouts via Circle Gateway
 
-Transfers NGO allocations cross-chain to Base Sepolia. Transfers winner/loser allocations to Arc wallets via Circle Gateway. Marks payouts executed. Market state: RESOLVED → PAID_OUT. See [test_ngo_payout.js](test_ngo_payout.js).
+Transfers NGO allocations cross-chain to Base Sepolia. Transfers winner/loser allocations to Arc wallets via Circle Gateway. Marks payouts executed. Market state: RESOLVED → PAID_OUT. 
 
 ---
 
@@ -900,7 +909,7 @@ Circle Gateway detects the source and destination are on different chains, so it
 
 2. **Cost Efficiency:** Traditional bridges charge 0.1-0.5% fees. CCTP has minimal fees (just gas), preserving more funds for humanitarian aid.
 
-3. **Speed:** 15-20 minute finality means NGOs get funds fast enough to respond to disasters.
+3. **Speed:** Quick finality means NGOs get funds fast enough to respond to disasters.
 
 4. **Security:** No third-party bridge risk. Circle's validators are institutional-grade.
 
@@ -1050,7 +1059,7 @@ Let's visualize the entire system showing every Circle touchpoint:
 - NGOs receive funds on their preferred blockchain
 - No bridge expertise required
 - Native USDC everywhere
-- Fast settlement (15-20 minutes)
+- Fast settlement
 
 **3. Provides Enterprise-Grade Infrastructure:**
 - Regulatory compliance built-in
