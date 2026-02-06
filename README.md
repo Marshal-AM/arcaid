@@ -50,6 +50,8 @@
 
 ## Introduction: Arcaid, Zero-Loss Prediction Markets for Humanitarian Aid
 
+<img width="1920" height="661" alt="image" src="https://github.com/user-attachments/assets/d76d0568-c8c8-4e5f-9d54-3fa7b74f28c1" />
+
 Imagine a prediction market where you can never lose your investment, yet still earn rewards for being right—and where every trade automatically funds disaster relief NGOs.
 
 **The Core Innovation**
