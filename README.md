@@ -2,7 +2,7 @@
 
 ## Important Links
 
-- **Demo Video**: Coming Soon
+- **Submission Link**: [View Here](https://ethglobal.com/showcase/arcaid-n5jxm)
 - **Live App**: [View Here](https://arcaid.vercel.app)
 
 ## Bounties applied for
